@@ -8,7 +8,7 @@ FONARTO_XT_PATH: str = "/tmp/fonarto.xt.ttf"
 
 GMAIL_USERNAME: str = "nasiri.aliabdullah@gmail.com"
 GMAIL_PASSWORD: str = "uvos gywy jnjx rrok"
-EMAIL_DEST: str = "nasiri.aliabdullah@gmail.com"
+EMAIL_DEST: str = "nasiri.waliabdullah@gmail.com"
 
 TOR_PASSWORD: str = "Ali.Nasiri#88771234"
 TOR_PORT: str = "9050"
