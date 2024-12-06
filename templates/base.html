@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{{ title }}</title>
+
+    <style>
+      /* Basic table styling */
+      .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse;
+      }
+
+      .table th,
+      .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+      }
+
+      .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+      }
+
+      .table tbody + tbody {
+        border-top: 2px solid #dee2e6;
+      }
+
+      .table {
+        background-color: transparent;
+      }
+
+      /* Bordered table */
+      .table-bordered {
+        border: 1px solid #dee2e6;
+      }
+
+      .table-bordered th,
+      .table-bordered td {
+        border: 1px solid #dee2e6;
+      }
+
+      .table-bordered thead th,
+      .table-bordered thead td {
+        border-bottom-width: 2px;
+      }
+
+      /* Hoverable rows */
+      .table-hover tbody tr:hover {
+        color: #212529;
+        background-color: rgba(0, 0, 0, 0.075);
+      }
+
+      /* Striped rows */
+      .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .table-striped tbody tr:nth-of-type(even) {
+        background-color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="banner">
+      <h1>{{ title }}</h1>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped">
+      <thead>
+        <tr>
+          {% for col in cols %}
+          <th scope="col">{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          {% for th in row %}
+          <th scope="row">{{ th }}</th>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

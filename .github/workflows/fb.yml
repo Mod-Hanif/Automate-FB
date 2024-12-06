@@ -1,0 +1,100 @@
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: "[Optional] The Facebook username to log in as."
+
+      page_url:
+        description: "[Required] The URL of the Facebook page where you want to like all posts and add comments."
+        required: true
+
+      groups:
+        description: "[Optional] The names of the groups where you want to share the post, separated by commas."
+
+      share_count:
+        description: "[Optional] The number of times to share the post in the specified groups. Default is 5."
+        default: "5"
+
+      comment_count:
+        description: "[Optional] The number of comments to write. Default is 50."
+        default: "50"
+
+      like_count:
+        description: "[Optional] The number of posts you want to like on the specified Facebook page. Default is 50."
+        default: "50"
+
+      friend_request_count:
+        description: "[Optional] The number of friend requests to send."
+        default: "50"
+
+      send_invites:
+        description: "Choose whether to send invites. Select 'True' to send invites, or 'False' to disable sending invites."
+        default: False
+        type: choice
+        options:
+          - True
+          - False
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v2
+
+      - name: Install Tor and Proxychains4 for Anonymized Requests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tor proxychains4
+
+      - name: Configure Tor with Control Port and Password
+        run: |
+          echo "ControlPort 9051" | sudo tee -a /etc/tor/torrc
+          echo "HashedControlPassword 16:F6619F3AC6F73A1C603AF765CD9850B6D0FC6F0E2E56FA0A32A255B191" | sudo tee -a /etc/tor/torrc
+          echo "CookieAuthentication 0" | sudo tee -a /etc/tor/torrc
+
+      - name: Start Tor Service
+        run: sudo service tor start
+
+      - name: Set Up Python Environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start Virtual Framebuffer for Headless Chrome
+        run: |
+          Xvfb :99 -ac &
+          export DISPLAY=:99
+
+      - name: Execute Facebook Bot for Manual Trigger
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          SEND_INVITES_FLAG=""
+          if [ "${{ github.event.inputs.send_invites }}" == "true" ]; then
+            SEND_INVITES_FLAG="--send-invites"
+          fi
+
+          python account.py \
+            --headless \
+            --disable-gpu \
+            --disable-infobars \
+            --disable-extensions \
+            --start-maximized \
+            --block-notifications \
+            --no-sandbox \
+            --incognito \
+            main \
+            --page-url "${{ github.event.inputs.page_url}}" \
+            --username "${{ github.event.inputs.username }}" \
+            --groups "${{ github.event.inputs.groups}}" \
+            --share-count "${{ github.event.inputs.share_count}}" \
+            --comment-count "${{ github.event.inputs.comment_count}}" \
+            --like-count "${{ github.event.inputs.like_count}}" \
+            --friend-request-count "${{ github.event.inputs.friend_request_count}}" \
+            $SEND_INVITES_FLAG

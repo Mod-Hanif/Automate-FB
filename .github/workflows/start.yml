@@ -1,0 +1,31 @@
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 */6 * * *" # Runs at 0 minutes past the hour, every 6 hours.
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v2
+
+      - name: Set Up Python Environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start Virtual Framebuffer for Headless Chrome
+        run: |
+          Xvfb :99 -ac &
+          export DISPLAY=:99
+
+      - name: Execute Facebook Bot for Manual Trigger
+        run: python start.py
